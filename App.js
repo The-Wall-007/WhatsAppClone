@@ -1,8 +1,9 @@
+import "react-native-gesture-handler";
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as SplaceScreen from "expo-splash-screen";
 import * as Fonts from "expo-font";
+import AppNavigator from "./src/Navigators/AppNavigator";
 
 SplaceScreen.preventAutoHideAsync();
 
@@ -47,22 +48,8 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider style={styles.container} onLayout={onLayout}>
-      <SafeAreaView>
-        <Text style={styles.label}>
-          Open up App.js to start working on your app!
-        </Text>
-      </SafeAreaView>
+    <SafeAreaProvider onLayout={onLayout}>
+      <AppNavigator />
     </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  label: {
-    fontFamily: "boldItalic",
-  },
-});
