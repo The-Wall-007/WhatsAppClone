@@ -6,3 +6,5 @@
 3. https://fonts.google.com/ --> For Fonts
 
 4. expo install expo-splash-screen
+
+5. expo install expo/vector-icons
