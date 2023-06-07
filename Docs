@@ -1,0 +1,8 @@
+1. expo install react-native-safe-area-context
+
+2. npm install --> Install Latest version
+   expo install --> Install Compatible version
+
+3. https://fonts.google.com/ --> For Fonts
+
+4. expo install expo-splash-screen
