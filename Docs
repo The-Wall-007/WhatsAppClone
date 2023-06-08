@@ -8,3 +8,9 @@
 4. expo install expo-splash-screen
 
 5. expo install expo/vector-icons
+
+6. <KeyboardAvoidingView
+   style={styles.screen}
+   keyboardVerticalOffset={100}
+   behavior={Platform.OS === "ios" ? "padding" : undefined}
+   >
