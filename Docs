@@ -14,3 +14,10 @@
    keyboardVerticalOffset={100}
    behavior={Platform.OS === "ios" ? "padding" : undefined}
    >
+
+7.  <ScrollView showsVerticalScrollIndicator={false}>
+          <KeyboardAvoidingView
+            style={styles.keyboardAvoidingView}
+            behavior={Platform.OS === "ios" ? "height" : undefined}
+            keyboardVerticalOffset={100}
+          >
