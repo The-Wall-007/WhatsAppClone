@@ -2,7 +2,8 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-import { Input, SubmitButton } from "../../Components";
+import Input from "../Input";
+import SubmitButton from "../SubmitButton";
 
 const SignInForm = () => {
   return (
