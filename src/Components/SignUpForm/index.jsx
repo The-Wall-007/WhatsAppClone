@@ -7,6 +7,7 @@ import SubmitButton from "../SubmitButton";
 import { validateInput } from "../../utils/actions/formActions";
 import { reducer } from "../../utils/reducers/formReducer";
 import { signUp } from "../../utils/actions/authActions";
+import { getFirebaseApp } from "../../utils/firebaseHelper";
 
 const initialState = {
   inputValues: {
@@ -37,7 +38,7 @@ const SignUpForm = () => {
   );
 
   const authHandler = () => {
-    console.log(
+    signUp(
       formState.inputValues.firstName,
       formState.inputValues.lastName,
       formState.inputValues.email,
