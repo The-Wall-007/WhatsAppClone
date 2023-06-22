@@ -1,13 +1,23 @@
-import React, { useCallback, useReducer } from "react";
-import { StyleSheet } from "react-native";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
+import { ActivityIndicator, Alert, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
 
 import Input from "../Input";
 import SubmitButton from "../SubmitButton";
 import { validateInput } from "../../utils/actions/formActions";
 import { reducer } from "../../utils/reducers/formReducer";
+import { signUp } from "../../utils/actions/authActions";
+import colors from "../../Constant/colors";
 
 const initialState = {
+  inputValues: {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  },
+
   inputValidities: {
     firstName: false,
     lastName: false,
@@ -18,15 +28,45 @@ const initialState = {
 };
 
 const SignUpForm = () => {
+  const dispatch = useDispatch();
+
   const [formState, dispatchFormState] = useReducer(reducer, initialState);
+
+  const [error, setError] = useState();
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert("Error occured!", error);
+    }
+  }, [error]);
 
   const inputChangedHandler = useCallback(
     (inputId, inputValue) => {
       const result = validateInput(inputId, inputValue);
-      dispatchFormState({ inputId, validationResult: result });
+      dispatchFormState({ inputId, validationResult: result, inputValue });
     },
     [dispatchFormState]
   );
+
+  const authHandler = async () => {
+    try {
+      setLoading(true);
+
+      const action = signUp(
+        formState.inputValues.firstName,
+        formState.inputValues.lastName,
+        formState.inputValues.email,
+        formState.inputValues.password
+      );
+
+      setError(null);
+      await dispatch(action);
+    } catch (err) {
+      setLoading(false);
+      setError(err.message);
+    }
+  };
 
   return (
     <>
@@ -73,12 +113,20 @@ const SignUpForm = () => {
         error={formState.inputValidities["password"]}
       />
 
-      <SubmitButton
-        title={"Sign Up"}
-        onPress={() => console.log("Pressed")}
-        style={{ marginTop: 20 }}
-        disabled={!formState.formIsValid}
-      />
+      {isLoading ? (
+        <ActivityIndicator
+          size="small"
+          color={colors.primaryColor}
+          style={{ marginTop: 20 }}
+        />
+      ) : (
+        <SubmitButton
+          title={"Sign Up"}
+          onPress={authHandler}
+          style={{ marginTop: 20 }}
+          disabled={!formState.formIsValid}
+        />
+      )}
     </>
   );
 };
