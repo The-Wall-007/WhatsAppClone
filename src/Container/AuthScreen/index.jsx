@@ -16,7 +16,7 @@ import colors from "../../Constant/colors";
 import Logo from "../../assets/images/logo.png";
 
 const AuthScreen = () => {
-  const [isSingUp, setIsSingUp] = useState(true);
+  const [isSingUp, setIsSingUp] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
