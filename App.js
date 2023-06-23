@@ -1,5 +1,6 @@
 import "react-native-gesture-handler";
 import { useCallback, useEffect, useState } from "react";
+import { LogBox } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as SplaceScreen from "expo-splash-screen";
 import * as Fonts from "expo-font";
@@ -9,7 +10,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AppNavigator from "./src/Navigators/AppNavigator";
 import { store } from "./src/store";
 
-AsyncStorage.clear();
+// AsyncStorage.clear();
+
+LogBox.ignoreAllLogs();
 
 SplaceScreen.preventAutoHideAsync();
 

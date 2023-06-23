@@ -1,5 +1,25 @@
 import { validate } from "validate.js";
 
+export const validateLength = (id, value, minLength, maxLength, allowEmpty) => {
+  const constraints = {
+    presence: { allowEmpty },
+  };
+
+  if (!allowEmpty || value !== "") {
+    constraints.length = {};
+    if (minLength !== null) {
+      constraints.length.minimum = minLength;
+    }
+    if (maxLength !== null) {
+      constraints.length.maximum = maxLength;
+    }
+  }
+
+  const validateResult = validate({ [id]: value }, { [id]: constraints });
+
+  return validateResult && validateResult[id];
+};
+
 export const validateString = (id, value) => {
   const constraints = {
     presence: { allowEmpty: false },

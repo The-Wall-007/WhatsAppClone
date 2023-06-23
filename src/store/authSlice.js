@@ -24,10 +24,19 @@ export const authSlice = createSlice({
       state.userData = null;
       state.didTryAutoLogin = false;
     },
+    updateLoggedInUserData: (state, action) => {
+      const { newData } = action.payload;
+      state.userData = { ...state.userData, ...newData };
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { authentication, setDidTryAutoLogin, logout } = authSlice.actions;
+export const {
+  authentication,
+  setDidTryAutoLogin,
+  logout,
+  updateLoggedInUserData,
+} = authSlice.actions;
 
 export default authSlice.reducer;
