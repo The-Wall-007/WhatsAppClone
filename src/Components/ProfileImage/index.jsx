@@ -21,6 +21,9 @@ import { updateLoggedInUserData } from "../../store/authSlice";
 const ProfileImage = (props) => {
   const source = props.uri ? { uri: props.uri } : profilePlaceHolder;
   const userId = props.userId;
+  const showEditButton = props.showEditButton && props.showEditButton === true;
+
+  const Component = showEditButton ? TouchableOpacity : View;
 
   const dispatch = useDispatch();
 
@@ -57,7 +60,7 @@ const ProfileImage = (props) => {
   };
 
   return (
-    <TouchableOpacity onPress={pickImage}>
+    <Component onPress={pickImage}>
       {!imageLoading ? (
         <Image
           source={image}
@@ -86,10 +89,12 @@ const ProfileImage = (props) => {
         </View>
       )}
 
-      <View style={styles.iconStyle}>
-        <FontAwesome name="pencil" size={16} color={colors.grey} />
-      </View>
-    </TouchableOpacity>
+      {showEditButton && !imageLoading && (
+        <View style={styles.iconStyle}>
+          <FontAwesome name="pencil" size={16} color={colors.grey} />
+        </View>
+      )}
+    </Component>
   );
 };
 
