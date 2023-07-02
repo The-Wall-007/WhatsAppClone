@@ -1,28 +1,26 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 
 import ProfileImage from "../ProfileImage";
 import colors from "../../Constant/colors";
 
-const ChatList = ({ userData }) => {
+const ChatList = ({ profilePicture, title, subTitle, onPress }) => {
   return (
-    <View style={styles.container}>
-      <View>
-        <ProfileImage
-          uri={userData.profilePicture}
-          size={40}
-          showEditButton={false}
-        />
+    <TouchableWithoutFeedback onPress={onPress}>
+      <View style={styles.container}>
+        <View>
+          <ProfileImage uri={profilePicture} size={40} showEditButton={false} />
+        </View>
+        <View style={styles.textContainer}>
+          <Text numberOfLines={1} style={styles.title}>
+            {title}
+          </Text>
+          <Text numberOfLines={1} style={styles.subTitle}>
+            {subTitle}
+          </Text>
+        </View>
       </View>
-      <View style={styles.textContainer}>
-        <Text numberOfLines={1} style={styles.title}>
-          {userData.firstName}
-        </Text>
-        <Text numberOfLines={1} style={styles.subTitle}>
-          {userData.about}
-        </Text>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

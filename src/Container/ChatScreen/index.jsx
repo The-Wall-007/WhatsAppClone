@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -9,17 +9,58 @@ import {
   Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 
 import backGroundImage from "../../assets/images/droplet.jpeg";
 import colors from "../../Constant/colors";
+import { PageComponent } from "../../Components";
+import Bubble from "../../Components/Bubble";
+import { createChat } from "../../utils/actions/chatActions";
 
-const ChatScreen = () => {
+const ChatScreen = (props) => {
+  const userData = useSelector((state) => state.auth.userData);
+  const storedUsers = useSelector((state) => state.users.storedUsers);
+  const storedChats = useSelector((state) => state.chats.chatsData);
+
+  console.log(storedChats);
+
   const [message, setMessage] = useState("");
+  const [chatUsers, setChatUsers] = useState([]);
+  const [chatId, setChatId] = useState(props.route?.params?.chatId);
 
-  const sendMessage = useCallback(() => {
+  const chatData =
+    (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
+
+  const getChatTitleFromName = () => {
+    const otherUserId = chatUsers.find((uid) => uid !== userData.userId);
+    const otherUserData = storedUsers[otherUserId];
+
+    return (
+      otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`
+    );
+  };
+
+  useEffect(() => {
+    props.navigation.setOptions({
+      headerTitle: getChatTitleFromName(),
+    });
+
+    setChatUsers(chatData.users);
+  }, [chatUsers]);
+
+  const sendMessage = useCallback(async () => {
+    try {
+      let id = chatId;
+      if (!id) {
+        //No chat id. Create the chat
+        id = await createChat(userData.userId, props.route.params.newChatData);
+        setChatId(id);
+      }
+    } catch (error) {}
+
     setMessage("");
-  }, [message]);
+  }, [message, chatId]);
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={styles.container}>
@@ -31,7 +72,13 @@ const ChatScreen = () => {
         <ImageBackground
           source={backGroundImage}
           style={styles.imageBackGround}
-        ></ImageBackground>
+        >
+          <PageComponent style={{ backgroundColor: "transparent" }}>
+            {!chatId && (
+              <Bubble text={"This is a new chat. Say hi!!"} type={"system"} />
+            )}
+          </PageComponent>
+        </ImageBackground>
 
         <View style={styles.inputContainer}>
           <TouchableOpacity style={styles.mediaButton}>
