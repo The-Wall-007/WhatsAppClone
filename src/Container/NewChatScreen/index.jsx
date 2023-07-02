@@ -8,19 +8,21 @@ import {
   View,
 } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwesome } from "@expo/vector-icons";
 
 import { ChatList, CustomeHeaderButton, PageComponent } from "../../Components";
 import { searchUser } from "../../utils/actions/userActions";
 import colors from "../../Constant/colors";
+import { setStoredUsers } from "../../store/userSlice";
 
 const NewChatScreen = (props) => {
+  const dispatch = useDispatch();
   const userData = useSelector((state) => state.auth.userData);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [users, setUsers] = useState([]);
-  const [noResultsFound, setNoResultsFound] = useState(true);
+  const [users, setUsers] = useState();
+  const [noResultsFound, setNoResultsFound] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -47,11 +49,15 @@ const NewChatScreen = (props) => {
       setIsLoading(true);
 
       const userResults = await searchUser(searchTerm);
+
+      delete userResults[userData.userId];
+
       setUsers(userResults);
 
       if (Object.keys(userResults).length === 0) {
         setNoResultsFound(true);
       } else {
+        dispatch(setStoredUsers({ newUsers: userResults }));
         setNoResultsFound(false);
       }
 
@@ -60,6 +66,12 @@ const NewChatScreen = (props) => {
 
     return () => clearTimeout(delaySearch);
   }, [searchTerm]);
+
+  const onUserPressed = (userId) => {
+    props.navigation.navigate("ChatListScreen", {
+      selectedUserId: userId,
+    });
+  };
 
   return (
     <PageComponent>
@@ -86,8 +98,16 @@ const NewChatScreen = (props) => {
             const userId = itemData.item;
 
             const userData = users[userId];
+            const { firstName, about, profilePicture } = userData;
 
-            return <ChatList userData={userData} />;
+            return (
+              <ChatList
+                title={firstName}
+                subTitle={about}
+                profilePicture={profilePicture}
+                onPress={() => onUserPressed(userId)}
+              />
+            );
           }}
         />
       )}
