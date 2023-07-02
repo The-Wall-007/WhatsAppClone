@@ -1,7 +1,29 @@
-import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import React, { useRef } from "react";
+import { View, StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from "react-native-popup-menu";
+import uuid from "react-native-uuid";
+import * as Clipboard from "expo-clipboard";
+import { Feather, FontAwesome } from "@expo/vector-icons/build/Icons";
 
 import colors from "../../Constant/colors";
+
+const MenuItem = (props) => {
+  const Icon = props.iconPack ?? Feather;
+
+  return (
+    <MenuOption onSelect={props.onSelect}>
+      <View style={styles.menuItemContainer}>
+        <Text style={styles.menuText}>{props.text}</Text>
+        <Icon name={props.icon} size={18} />
+      </View>
+    </MenuOption>
+  );
+};
 
 const Bubble = (props) => {
   const { text, type } = props;
@@ -9,6 +31,11 @@ const Bubble = (props) => {
   const bubbleStyle = { ...styles.container };
   const textStyle = { ...styles.text };
   const wrapperStyle = { ...styles.wrapperStyle };
+
+  const menuRef = useRef(null);
+  const menuId = useRef(uuid.v4());
+
+  let Container = View;
 
   switch (type) {
     case "system":
@@ -28,23 +55,50 @@ const Bubble = (props) => {
       wrapperStyle.justifyContent = "flex-end";
       bubbleStyle.backgroundColor = "#e7fed6";
       bubbleStyle.maxWidth = "90%";
+      Container = TouchableWithoutFeedback;
       break;
 
     case "theirMessage":
       wrapperStyle.justifyContent = "flex-start";
-
       bubbleStyle.maxWidth = "90%";
+      Container = TouchableWithoutFeedback;
       break;
 
     default:
       break;
   }
 
+  const copyToClipboard = async (text) => {
+    await Clipboard.setStringAsync(text);
+  };
+
   return (
     <View style={wrapperStyle}>
-      <View style={bubbleStyle}>
-        <Text style={textStyle}>{text}</Text>
-      </View>
+      <Container
+        onLongPress={() =>
+          menuRef.current.props.ctx.menuActions.openMenu(menuId.current)
+        }
+        style={{ width: "100%" }}
+      >
+        <View style={bubbleStyle}>
+          <Text style={textStyle}>{text}</Text>
+          <Menu name={menuId.current} ref={menuRef}>
+            <MenuTrigger />
+            <MenuOptions>
+              <MenuItem
+                text="Copy to clipboard"
+                onSelect={() => copyToClipboard(text)}
+                icon={"copy"}
+              />
+              <MenuItem
+                text="Option 2"
+                icon={"star-o"}
+                iconPack={FontAwesome}
+              />
+            </MenuOptions>
+          </Menu>
+        </View>
+      </Container>
     </View>
   );
 };
@@ -67,5 +121,16 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "regular",
     letterSpacing: 0.3,
+  },
+  menuItemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 5,
+  },
+  menuText: {
+    flex: 1,
+    fontFamily: "regular",
+    letterSpacing: 0.3,
+    fontSize: 16,
   },
 });

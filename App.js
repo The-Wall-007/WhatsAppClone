@@ -6,6 +6,7 @@ import * as SplaceScreen from "expo-splash-screen";
 import * as Fonts from "expo-font";
 import { Provider } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MenuProvider } from "react-native-popup-menu";
 
 import AppNavigator from "./src/Navigators/AppNavigator";
 import { store } from "./src/store";
@@ -59,7 +60,9 @@ export default function App() {
   return (
     <Provider store={store}>
       <SafeAreaProvider onLayout={onLayout}>
-        <AppNavigator />
+        <MenuProvider>
+          <AppNavigator />
+        </MenuProvider>
       </SafeAreaProvider>
     </Provider>
   );
