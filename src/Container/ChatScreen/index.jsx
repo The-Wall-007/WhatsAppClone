@@ -16,14 +16,13 @@ import backGroundImage from "../../assets/images/droplet.jpeg";
 import colors from "../../Constant/colors";
 import { PageComponent } from "../../Components";
 import Bubble from "../../Components/Bubble";
-import { createChat } from "../../utils/actions/chatActions";
+import { createChat, sendTextMessage } from "../../utils/actions/chatActions";
 
 const ChatScreen = (props) => {
   const userData = useSelector((state) => state.auth.userData);
   const storedUsers = useSelector((state) => state.users.storedUsers);
   const storedChats = useSelector((state) => state.chats.chatsData);
-
-  console.log(storedChats);
+  const chatMessages = useSelector((state) => state.messages.messagesData);
 
   const [message, setMessage] = useState("");
   const [chatUsers, setChatUsers] = useState([]);
@@ -57,7 +56,11 @@ const ChatScreen = (props) => {
         id = await createChat(userData.userId, props.route.params.newChatData);
         setChatId(id);
       }
-    } catch (error) {}
+
+      sendTextMessage(chatId, userData.userId, message);
+    } catch (error) {
+      console.log("Error white sendMessage:::::", error);
+    }
 
     setMessage("");
   }, [message, chatId]);

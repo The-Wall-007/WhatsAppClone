@@ -17,6 +17,7 @@ import { getFirebaseApp } from "../utils/firebaseHelper";
 import { setChatsData } from "../store/chatSlice";
 import colors from "../Constant/colors";
 import { setStoredUsers } from "../store/userSlice";
+import { setChatMessages } from "../store/messagesSlice";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -136,7 +137,17 @@ function MainNavigator() {
           }
         });
 
-        setIsLoading(false);
+        const messageRef = child(dbRef, `messages/${chatId}`);
+        refs.push(messageRef);
+
+        onValue(messageRef, (messagesSnapShort) => {
+          const messagesData = messagesSnapShort.val();
+          dispatch(setChatMessages({ chatId, messagesData }));
+        });
+
+        if (chatsFoundCount === 0) {
+          setIsLoading(false);
+        }
       }
     });
 
